@@ -15,7 +15,7 @@ def random_proxy():
     return random.randint(0, len(proxies) - 1)
 
 zillow_link = "https://www.zillow.com/atlanta-ga/rentals/?searchQueryState=%7B%22pagination%22%3A%7B%7D%2C%22mapBounds%22%3A%7B%22north%22%3A34.020940947512194%2C%22east%22%3A-83.9150937578125%2C%22south%22%3A33.499180258111316%2C%22west%22%3A-85.0027402421875%7D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22price%22%3A%7B%22max%22%3A403640%7D%2C%22beds%22%3A%7B%22min%22%3A1%7D%2C%22fore%22%3A%7B%22value%22%3Afalse%7D%2C%22mp%22%3A%7B%22max%22%3A2000%7D%2C%22auc%22%3A%7B%22value%22%3Afalse%7D%2C%22nc%22%3A%7B%22value%22%3Afalse%7D%2C%22fr%22%3A%7B%22value%22%3Atrue%7D%2C%22fsbo%22%3A%7B%22value%22%3Afalse%7D%2C%22cmsn%22%3A%7B%22value%22%3Afalse%7D%2C%22fsba%22%3A%7B%22value%22%3Afalse%7D%7D%2C%22isListVisible%22%3Atrue%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A37211%2C%22regionType%22%3A6%7D%5D%7D"
-url_google_form = "https://docs.google.com/forms/d/e/1FAIpQLSfdxIQzUnz5d-NClg8jUk6nZEwvS4xHPUPYRH5aLnzy2UFlpQ/viewform?usp=sf_link"
+url_google_form = "YOUR FORM HERE"
 
 
 # It appears that zillow has now resorted to blocking any requests from my computer. What follows will seek to address this
