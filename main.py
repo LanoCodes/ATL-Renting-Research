@@ -5,13 +5,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
-import time, os, random, requests
+import time, random, requests
 from urllib.request import Request, urlopen
 from fake_useragent import UserAgent
 from IPython.display import clear_output
 
 random_sleep = [2, 3, 4]
-# Retrieve a random index proxy, (we need the index to delete it if it's not working)
 def random_proxy():
     return random.randint(0, len(proxies) - 1)
 
@@ -22,23 +21,15 @@ url_google_form = "https://docs.google.com/forms/d/e/1FAIpQLSfdxIQzUnz5d-NClg8jU
 # It appears that zillow has now resorted to blocking any requests from my computer. What follows will seek to address this
 ua = UserAgent()
 proxies = []
-# The latest proxies have to be retrieved
+
 proxies_req = Request('https://www.sslproxies.org/')
 proxies_req.add_header('User-Agent', ua.random)
-# The below line gave me an error citing it couldn't get a local issuer certificate. I want to try to open the link with the requests package and see whether the rest of the code breaks or not
+
 proxies_doc = urlopen(proxies_req).read().decode('utf8')
 
-# Maybe this may have to have 'lxml' instead of html.parser?
 soup = BeautifulSoup(proxies_doc, 'html.parser')
-# print(soup)
-# proxies_table = soup.find(id='proxylisttable')
-# Since I am having trouble identifying the tabel, I want to find every table and list their classes
-# for table in soup.find_all('table'):
-#     print(table.get('class'))
 
 proxies_table = soup.find(attrs={'class': ["table","table-striped","table-bordered"]})
-# proxies_table = soup.select(".table.table-striped.table-bordered")
-# print(proxies_table)
 
 # save proxies in an array
 for row in proxies_table.tbody.find_all('tr'):
@@ -71,7 +62,7 @@ for n in range(1, 20):
         proxy_index = random_proxy()
         proxy = proxies[proxy_index]
 
-# This will create different "headers," pretending to be a browser.
+# This will create different headers, pretending to be a browser.
 user_agent_list = [
    #Chrome
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
@@ -100,7 +91,6 @@ user_agent_list = [
     'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
 ]
 
-# Lastly, enter these things into the request
 # Making a get request
 user_agent = random.choice(user_agent_list)
 headers = {'User-Agent': user_agent,
@@ -112,22 +102,16 @@ response = requests.get(url=zillow_link,
 zillow_webpage = response.text
 
 soup_zillow = BeautifulSoup(zillow_webpage, 'lxml')
-apt_listing_links = soup_zillow.find_all("a", class_="property-card-link")
+apt_listing_links = soup_zillow.find_all("a", {"class": ["StyledPropertyCardDataArea-c11n-8-84-0__sc-yipmu-0", "ednMDe", "property-card-link"]})
 print(f"Num of links: {len(apt_listing_links)}")
-# for link in apt_listing_links:
-#     print(link)
-#     # print(link.find('address'))
-#     print(link.contents[0].contents)
-#     print('\n')
+
 # Getting the links for the listings and formatting correctly
 for link in apt_listing_links:
     if "https://" in link['href']:
         # print(f"Formatted correctly: {link['href']}")
         print("Check")
     else:
-        # print(f"NOT formatted correctly: {link['href']}")
         link['href'] = ''.join(('https://www.zillow.com',link['href']))
-        # print(f'New string: {link["href"]}')
 
 listing_links = []
 listing_prices = []
@@ -135,14 +119,8 @@ listing_addrs = []
 apt_listing_prices = soup_zillow.find_all("span",attrs={"data-test":"property-card-price"})
 print(f"Testing:\tNum of prices: {len(apt_listing_prices)}")
 for price in apt_listing_prices:
-    # print(price.text.split())
-    # listing_prices.append(price.text.split()[0])
     listing_prices.append(price.text.split()[0][1:6])
-for raw_price in listing_prices:
-    # print(raw_price[1:6])
-    print(raw_price)
 
-# print([item[""]])
 for listing in apt_listing_links:
     listing_links.append(listing['href'])
     listing_addrs.append(listing.contents[0].contents)
@@ -152,21 +130,9 @@ amended_listing_addrs = listing_addrs[::2]
 print(f"List of links len: {len(amended_listing_links)}\n"
       f"List of addrs len: {len(amended_listing_addrs)}")
 
-
 # Final lists: amended_listing_links, amended_listing_addrs, listing_prices
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 driver.get(url_google_form)
-# input_boxes = driver.find_elements(By.CLASS_NAME, "whsOnd zHQkBf")
-# time.sleep(random.choice(random_sleep))
-# input_boxes = driver.find_elements(By.CSS_SELECTOR, ".whsOnd.zHQkBf")
-# # print(f"Len of how many input boxes: {len(input_boxes)}")
-# submit_btn = driver.find_element(By.CSS_SELECTOR, ".l4V7wb.Fxmcue")
-# If needed, below is the link to the page that pops up after clicking submit button
-# url_submit_page = "https://docs.google.com/forms/u/1/d/e/1FAIpQLSfdxIQzUnz5d-NClg8jUk6nZEwvS4xHPUPYRH5aLnzy2UFlpQ/formResponse"
-# refresh_form_btn = driver.find_element(By.LINK_TEXT, "Submit another response")
-
-# for box in input_boxes:
-#     print(box.send_keys('test'))
 
 for apt in range(len(amended_listing_addrs)):
     time.sleep(random.choice(random_sleep))
